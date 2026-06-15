@@ -3,15 +3,21 @@
   <head>
     <meta charset="utf-8">
     <title>Catálogo</title>
+    <link rel="stylesheet" href="/static/css/style.css">
   </head>
   <body>
-    <h1>Catálogo de Películas</h1>
-    <ul>
-      {% for p in peliculas %}
-        <li><a href="{% url 'peliculas:detalle' p.pk %}">{{ p.titulo }}</a> ({{ p.anio }})</li>
-      {% empty %}
-        <li>No hay películas.</li>
-      {% endfor %}
-    </ul>
+    <div class="container">
+      <h1>Catálogo de Películas</h1>
+      <ul class="peliculas">
+        {% for p in peliculas %}
+          <li>
+            <a href="{% url 'peliculas:detalle' p.pk %}">{{ p.titulo }}</a>
+            <div class="meta">{{ p.anio }}</div>
+          </li>
+        {% empty %}
+          <li>No hay películas.</li>
+        {% endfor %}
+      </ul>
+    </div>
   </body>
 </html>

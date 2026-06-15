@@ -1,0 +1,30 @@
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #f7f8fb;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 36px auto;
+  padding: 24px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0 0 12px 0;
+  font-size: 1.6rem;
+}
+
+ul.peliculas { list-style: none; padding: 0; margin: 8px 0 0 0; }
+ul.peliculas li { padding: 10px 12px; border-bottom: 1px solid #eef2f7; }
+ul.peliculas li a { color: #0b5fff; text-decoration: none; font-weight: 600; }
+ul.peliculas li a:hover { text-decoration: underline; }
+
+.meta { color: #6b7280; font-size: 0.9rem; }
+
+.back { display:inline-block; margin-top:18px; color:#374151; text-decoration:none }
