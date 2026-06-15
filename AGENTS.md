@@ -1,49 +1,51 @@
-Repository snapshot
+Resumen rápido
 
-- This repository currently contains a single Word document: Proyecto_Final_Catalogo_Peliculas_Completo.docx
-- There is no code, no package manifests, no CI, and this folder is not a git repository (verify with git status).
+- Este repositorio es una pequeña app Django llamada "catalogo" (manage.py, catalogo/, app peliculas/) con soporte Docker (Dockerfile, docker-compose.yml). Tiene seed data y un script de creación de BD en scripts/create_db.py.
 
-Primary goal for an agent
+Acciones importantes que un agente debe saber
 
-- Do not assume a language, framework, or build system exists. The doc may contain the actual project or instructions. Ask the user before creating code or changing repo structure.
+- Leer README.md primero: contiene los comandos exactos para venv, instalación, migraciones, y atajos de Make/Docker.
+- No borrar db.sqlite3 ni la carpeta .venv sin confirmación explícita.
 
-Quick checks (first actions)
+Cómo ejecutar (rápido)
 
-- List files: run PowerShell `Get-ChildItem -LiteralPath . -Force` or `dir`.
-- Check git: `git status --porcelain` (if this errors, the directory is not a git repo). If the repo is expected to be under version control, ask the user whether to initialize git.
-- Search for hidden instruction files: look for `.opencode`, `.github`, `README*`, `opencode.json`.
+- Entorno virtual (Windows): `python -m venv .venv` then `\.venv\Scripts\activate` (Unix: `source .venv/bin/activate`).
+- Instalar dependencias: `pip install -r requirements.txt`.
+- Migrar y arrancar servidor (local rápido usando SQLite o MySQL según env): `python manage.py migrate` then `python manage.py runserver`.
+- Crear superusuario: `python manage.py createsuperuser`.
+- Poblar datos de ejemplo: `python manage.py seed`.
 
-How to read the .docx safely (exact commands)
+Docker (recomendado para usar mysqlclient)
 
-- Recommended: use pandoc (if available) to convert to Markdown for easy reading:
-  - `pandoc -f docx -t markdown -o README.md "Proyecto_Final_Catalogo_Peliculas_Completo.docx"`
-  - After conversion, open README.md or inspect with `type README.md` (PowerShell) or `Get-Content README.md -Raw`.
-- If pandoc is not installed, unzip the docx (docx is a zip of XML) and read the main XML:
-  - `Expand-Archive -LiteralPath "Proyecto_Final_Catalogo_Peliculas_Completo.docx" -DestinationPath "$env:TEMP\docx_unzip"`
-  - Open the main content: `Get-Content "$env:TEMP\docx_unzip\word\document.xml" -Raw`
-  - The XML contains text in `<w:t>` tags; use a local tool or the user's permission to extract/convert.
+- Construir y levantar: `make build` && `make up` o `docker-compose up --build`.
+- docker-compose arranca MySQL (servicio db) y la app web. La compose file ha sido ajustada para permitir contraseña MySQL vacía en desarrollo (MYSQL_ALLOW_EMPTY_PASSWORD).
 
-What an agent should NOT do without confirmation
+Detalles técnicos / configuración de BD
 
-- Do not delete or rename the .docx. Ask before converting the canonical source file.
-- Do not initialize a git repo, add commits, or push to remotes unless the user requests it.
-- Do not guess a project structure or create boilerplate for a language/framework inferred from the document without explicit confirmation.
+- Django usa MySQL vía mysqlclient y lee credenciales desde variables de entorno (MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT). Si no se pasan, PASSWORD por defecto queda vacío — esto permite conexiones con root sin contraseña en desarrollo.
+- El archivo scripts/create_db.py crea la DB si falta y ya funciona con contraseña vacía.
 
-If the document contains a code project (common next steps)
+Advertencias de seguridad
 
-- If the doc is a spec or school assignment describing a project, ask the user whether they want the project scaffolded (language, build tool, tests).
-- If the doc contains source code snippets and you are asked to extract them, propose converting the docx to Markdown and creating a README + folder structure, then wait for confirmation.
+- Permitir contraseña vacía (MYSQL_ALLOW_EMPTY_PASSWORD) es inseguro. Úsalo solo en desarrollo local o entornos controlados. Para producción, establecer MYSQL_ROOT_PASSWORD y variables seguras.
 
-Commit and change guidance
+Qué no hacer sin permiso
 
-- Suggested commit (only after user approval): "Add README converted from Proyecto_Final_Catalogo_Peliculas_Completo.docx and AGENTS.md".
-- Keep changes minimal: add README.md and AGENTS.md, do not modify other files.
+- No cambiar Dockerfile a otra versión de Python ni eliminar .venv sin confirmación.
+- No eliminar artefactos como db.sqlite3 ni archivos de migraciones sin verificar con el usuario.
 
-Where to look next
+Dónde mirar primero
 
-- If user wants code work, ask which language/toolchain to target and whether to initialize git and CI.
-- If the doc should remain binary in repo, ask whether to also add a human-readable README derived from it.
+- README.md, docker-compose.yml, Dockerfile, catalogo/settings.py, peliculas/management/commands/seed.py, scripts/create_db.py.
 
-Contact/clarifying question
+Confirmación antes de commits
 
-- I attempted to read the .docx but cannot open it directly here. Do you want me to convert the .docx to Markdown (using pandoc) and add the output as README.md? Reply with a short confirmation (yes/no) and whether it's OK to create a commit.
+- He aplicado cambios menores en docker-compose.yml para permitir contraseña vacía. También crearé `.env.example` y commitearé los cambios si confirmas.
+
+Commit sugerido
+
+- "Configure MySQL for development (allow empty root password) and add .env.example"
+
+Siguiente paso
+
+- Si quieres que haga push a un remoto, dime a qué remoto/branch; no hago push sin permiso.

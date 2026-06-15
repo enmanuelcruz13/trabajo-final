@@ -5,7 +5,8 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-catalogo_db}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_ROOT_PASSWORD: ""                 # intencionadamente vacío para desarrollo
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'         # permite contraseña vacía (solo dev)
     volumes:
       - db_data:/var/lib/mysql
     ports:
