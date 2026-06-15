@@ -1,0 +1,12 @@
+import MySQLdb, os
+host=os.getenv('MYSQL_HOST','127.0.0.1')
+port=int(os.getenv('MYSQL_PORT','3306'))
+user=os.getenv('MYSQL_USER','root')
+passwd=os.getenv('MYSQL_PASSWORD','')
+db=os.getenv('MYSQL_DATABASE','catalogo_db')
+print('Connecting', host, port, user, 'pwd-empty?', passwd=='')
+conn=MySQLdb.connect(host=host, port=port, user=user, passwd=passwd)
+cur=conn.cursor()
+cur.execute(f"CREATE DATABASE IF NOT EXISTS {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+print('Created DB if missing')
+cur.close(); conn.close()

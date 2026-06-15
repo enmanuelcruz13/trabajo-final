@@ -32,3 +32,5 @@ services:
 
 volumes:
   db_data:
+
+  # additional service for the new Django project (catalogo_new)
