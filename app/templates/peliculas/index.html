@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Catálogo</title>
+  </head>
+  <body>
+    <h1>Catálogo de Películas</h1>
+    <ul>
+      {% for p in peliculas %}
+        <li><a href="{% url 'peliculas:detalle' p.pk %}">{{ p.titulo }}</a> ({{ p.anio }})</li>
+      {% empty %}
+        <li>No hay películas.</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
