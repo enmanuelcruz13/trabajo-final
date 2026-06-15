@@ -67,12 +67,13 @@ DATABASES = {
     }
 }
 
-# Fallback to SQLite for quick local testing when DJANGO_USE_SQLITE=1
-if os.getenv('DJANGO_USE_SQLITE', '0') == '1':
+# Fallback to SQLite for quick local testing when DJANGO_USE_SQLITE=1 (default)
+if os.getenv('DJANGO_USE_SQLITE', '1') == '1':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            # keep sqlite in repository root for convenience
+            'NAME': str((BASE_DIR.parent / 'db.sqlite3')),
         }
     }
 

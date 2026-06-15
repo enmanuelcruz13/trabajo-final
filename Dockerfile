@@ -13,4 +13,4 @@ RUN pip install -r /app/requirements.txt
 
 COPY app /app
 
-CMD ["gunicorn", "catalogo.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "catalogo.wsgi:application", "--bind", "0.0.0.0:8000", "--chdir", "/app"]
