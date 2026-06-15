@@ -142,3 +142,27 @@ Explicar la problematica, mostrar el analisis, el DER, las tecnologias utilizada
 7. Acceder a http://127.0.0.1:8000 para ver el catálogo y a /admin para gestionar datos.
 
 Si quieres, puedo generar datos de ejemplo (fixtures) o añadir autenticación con Django Allauth. Dime qué prefieres.
+
+## Docker (opción recomendada)
+
+1. Construir y levantar servicios:
+
+   make build
+   make up
+
+2. Los servicios levantados:
+   - MySQL en el contenedor `db` (puerto 3306)
+   - Aplicación Django en `web` (puerto 8000)
+
+3. Variables de entorno para docker-compose: puedes crear un archivo `.env` con estas variables:
+
+   DJANGO_SECRET_KEY=changeme
+   DJANGO_DEBUG=0
+   MYSQL_DATABASE=catalogo_db
+   MYSQL_ROOT_PASSWORD=rootpassword
+
+4. Comandos útiles:
+
+   make shell    # shell dentro del contenedor web
+   make logs     # seguir logs
+   make stop     # bajar los contenedores
