@@ -7,10 +7,10 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y build-essential default-libmysqlclient-dev && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/
+COPY app/requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip wheel
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
-COPY . /app/
+COPY app /app
 
 CMD ["gunicorn", "catalogo.wsgi:application", "--bind", "0.0.0.0:8000"]

@@ -14,7 +14,7 @@ services:
 
   web:
     build: .
-    command: bash -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn catalogo.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "cd app && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn catalogo.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
@@ -24,7 +24,7 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-0}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-catalogo_db}
       MYSQL_USER: ${MYSQL_USER:-root}
-      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-}
       MYSQL_HOST: db
       MYSQL_PORT: ${MYSQL_PORT:-3306}
     depends_on:
