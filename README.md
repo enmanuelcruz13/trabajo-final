@@ -101,3 +101,44 @@ El proyecto sera desplegado en Render y utilizara SQLite o una base de datos en 
 ## 13. Presentacion Final
 
 Explicar la problematica, mostrar el analisis, el DER, las tecnologias utilizadas y realizar una demostracion en vivo desde el enlace publico.
+
+## Instrucciones para levantar el proyecto Django (MySQL)
+
+1. Crear y activar un entorno virtual:
+
+   python -m venv .venv
+   # Windows
+   .\.venv\Scripts\activate
+   # Unix
+   source .venv/bin/activate
+
+2. Instalar dependencias:
+
+   pip install -r requirements.txt
+
+3. Preparar variables de entorno (archivo .env). Ejemplo:
+
+   DJANGO_SECRET_KEY=changeme
+   DJANGO_DEBUG=1
+   MYSQL_DATABASE=catalogo_db
+   MYSQL_USER=root
+   MYSQL_PASSWORD=yourpassword
+   MYSQL_HOST=127.0.0.1
+   MYSQL_PORT=3306
+
+   # Nota: en Windows es posible que prefieras instalar y usar PyMySQL en lugar de mysqlclient
+
+4. Crear la base de datos en MySQL manualmente (usar cliente MySQL) y dar permisos al usuario.
+
+5. Ejecutar migraciones y crear superusuario:
+
+   python manage.py migrate
+   python manage.py createsuperuser
+
+6. Ejecutar servidor de desarrollo:
+
+   python manage.py runserver
+
+7. Acceder a http://127.0.0.1:8000 para ver el catálogo y a /admin para gestionar datos.
+
+Si quieres, puedo generar datos de ejemplo (fixtures) o añadir autenticación con Django Allauth. Dime qué prefieres.
