@@ -67,6 +67,15 @@ DATABASES = {
     }
 }
 
+# Fallback to SQLite for quick local testing when DJANGO_USE_SQLITE=1
+if os.getenv('DJANGO_USE_SQLITE', '0') == '1':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
