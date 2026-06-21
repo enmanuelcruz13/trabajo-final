@@ -1,32 +1,47 @@
-{% load static %}
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <title>Registro</title>
-  </head>
-  <body>
-    <div class="container mt-4">
-      <h1>Registro</h1>
-      <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-          <label for="id_username" class="form-label">Usuario</label>
-          <input type="text" name="username" id="id_username" class="form-control" required>
+{% extends 'base.html' %}
+{% block title %}Crear Cuenta - CineGlow{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Crear Cuenta</h1>
+    <p class="subtitle">Regístrate para calificar películas y guardar tus favoritas</p>
+    
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid var(--accent-danger); padding: 12px; border-radius: 10px; font-size: 0.9rem; color: var(--accent-danger); margin-bottom: 16px; text-align: center;">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
         </div>
-        <div class="mb-3">
-          <label for="id_email" class="form-label">Email</label>
-          <input type="email" name="email" id="id_email" class="form-control">
+      {% endif %}
+
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          <input type="{% if 'password' in field.name %}password{% else %}text{% endif %}" 
+                 name="{{ field.html_name }}" 
+                 id="{{ field.id_for_label }}"
+                 class="form-control" 
+                 placeholder="Crea tu {{ field.label|lower }}"
+                 required>
+          {% if field.help_text %}
+            <span style="color: var(--text-dim); font-size: 0.75rem; margin-top: 2px; line-height: 1.2; display: block;">{{ field.help_text }}</span>
+          {% endif %}
+          {% if field.errors %}
+            <span style="color: var(--accent-danger); font-size: 0.8rem; margin-top: 4px;">{{ field.errors.0 }}</span>
+          {% endif %}
         </div>
-        <div class="mb-3">
-          <label for="id_password" class="form-label">Contraseña</label>
-          <input type="password" name="password" id="id_password" class="form-control" required>
-        </div>
-        <button class="btn btn-primary">Registrar</button>
-      </form>
+      {% endfor %}
+      
+      <button type="submit" class="btn btn-primary">Registrar</button>
+    </form>
+    
+    <div class="auth-footer">
+      ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </div>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

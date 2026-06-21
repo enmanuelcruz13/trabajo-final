@@ -1,15 +1,11 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 
-# 1. Definir la ruta base primero
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. Cargar el .env usando la ruta absoluta basada en BASE_DIR
-load_dotenv(BASE_DIR / '.env')
-
-# Configuración básica de Django
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'dev-secret')
 DEBUG = os.getenv('DJANGO_DEBUG', '1') == '1'
 
@@ -22,7 +18,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
     'peliculas',
     'accounts',
 ]
@@ -57,16 +52,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'catalogo.wsgi.application'
 
-# ==============================================================================
-# CONFIGURACIÓN DE BASE DE DATOS
-# ==============================================================================
-# Por defecto se configura MySQL vía variables de entorno
+# Database: configured via environment variables for MySQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('MYSQL_DATABASE', 'catalogo_db'),
         'USER': os.getenv('MYSQL_USER', 'root'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', ''),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', ''),  # puede quedar vacío en dev
         'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
         'PORT': os.getenv('MYSQL_PORT', '3306'),
         'OPTIONS': {
@@ -76,19 +68,13 @@ DATABASES = {
     }
 }
 
-# Si existe DATABASE_URL (para Supabase), se utiliza de forma prioritaria
-if os.getenv('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-# Si en tu archivo .env tienes DJANGO_USE_SQLITE=1, sobreescribirá MySQL por SQLite
-elif os.getenv('DJANGO_USE_SQLITE', '1') == '1':
+# Fallback to SQLite for quick local testing when DJANGO_USE_SQLITE=1 (default)
+if os.getenv('DJANGO_USE_SQLITE', '1') == '1':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',  # En versiones modernas de Django ya no hace falta envolverlo en str()
+            # keep sqlite in repository root for convenience
+            'NAME': str((BASE_DIR / 'db.sqlite3')),
         }
     }
 
@@ -106,6 +92,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
-# API externa de YouTube
-YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')

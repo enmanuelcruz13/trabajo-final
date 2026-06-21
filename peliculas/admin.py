@@ -1,18 +1,21 @@
 from django.contrib import admin
-from .models import Genero, Pelicula, Favorito, Calificacion
+from .models import Genero, Pelicula, Favorito, HistorialVisualizacion
 
 @admin.register(Genero)
 class GeneroAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre')
+    list_display = ('nombre',)
+
 
 @admin.register(Pelicula)
 class PeliculaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'titulo', 'anio', 'genero')
+    list_display = ('titulo', 'anio', 'genero')
+
 
 @admin.register(Favorito)
 class FavoritoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'pelicula', 'creado')
+    list_display = ('usuario', 'pelicula', 'creado')
 
-@admin.register(Calificacion)
-class CalificacionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'pelicula', 'puntuacion', 'creado')
+
+@admin.register(HistorialVisualizacion)
+class HistorialVisualizacionAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'pelicula', 'visto_en')

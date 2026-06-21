@@ -1,3 +1,8 @@
 django>=5.0,<6.0
 mysqlclient
 python-dotenv
+uvicorn[standard]
+google-api-python-client
+dj-database-url
+psycopg2-binary
+

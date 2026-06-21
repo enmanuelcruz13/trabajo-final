@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Mis Favoritos - CineGlow{% endblock %}
+
+{% block content %}
+  <h2 class="section-title"><i class="bi bi-heart-fill" style="color: var(--accent-danger);"></i> Mis Favoritos</h2>
+
+  {% if peliculas %}
+    <div class="grid">
+      {% for p in peliculas %}
+        <article class="card">
+          <div class="card-img-container">
+            {% if p.imagen %}
+              <img src="{{ p.imagen }}" alt="{{ p.titulo }}" class="card-img" loading="lazy">
+            {% else %}
+              <div class="card-placeholder">
+                <i class="bi bi-film"></i>
+                <span>{{ p.titulo|slice:":1" }}</span>
+              </div>
+            {% endif %}
+            
+            {% if p.promedio_calificacion %}
+              <div class="card-badge">
+                <i class="bi bi-star-fill"></i> {{ p.promedio_calificacion|floatformat:1 }}
+              </div>
+            {% endif %}
+            
+            <div class="card-actions">
+              <form method="post" action="{% url 'peliculas:toggle_favorito' p.pk %}" class="fav-form">
+                {% csrf_token %}
+                <button type="submit" class="fav-btn is-fav" aria-label="Quitar de Favoritos">
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-title">{{ p.titulo }}</a>
+            <div class="card-meta">
+              <span>{{ p.anio }}</span>
+              {% if p.genero %}
+                <span class="card-meta-genre">{{ p.genero.nombre }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 80px 40px; color: var(--text-muted); background: var(--surface-color); border-radius: 20px; border: 1px solid var(--surface-border); max-width: 600px; margin: 40px auto;">
+      <i class="bi bi-heartbreak" style="font-size: 4rem; display: block; margin-bottom: 20px; color: var(--text-dim);"></i>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 12px; color: var(--text-primary);">No tienes películas guardadas</h3>
+      <p style="margin-bottom: 24px;">Explora el catálogo y presiona el icono de corazón en cualquier película para guardarla aquí.</p>
+      <a href="{% url 'peliculas:index' %}" class="btn btn-primary">Explorar Catálogo</a>
+    </div>
+  {% endif %}
+{% endblock %}

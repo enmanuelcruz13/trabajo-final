@@ -1,38 +1,221 @@
-{% load static %}
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <title>Catalogo</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/">Catalogo</a>
-      </div>
-    </nav>
-    <div class="container">
-      <div class="row">
-        {% for p in peliculas %}
-        <div class="col-md-4 mb-3">
-          <div class="card h-100">
-            {% if p.imagen %}
-            <img src="{{ p.imagen }}" class="card-img-top" alt="{{ p.titulo }}">
+{% extends 'base.html' %}
+{% block title %}CineGlow - Catálogo de Películas y Series{% endblock %}
+
+{% block hero %}
+  {% if page_obj.object_list|length > 0 %}
+    {% with featured=page_obj.object_list.0 %}
+      <section class="hero" style="background-image: url('{{ featured.imagen }}'); background-size: cover; background-position: center;">
+        <div class="hero-overlay"></div>
+        <div class="hero-info">
+          <h1>{{ featured.titulo }}</h1>
+          <p class="meta">{{ featured.anio }}{% if featured.genero %} • {{ featured.genero.nombre }}{% endif %}</p>
+          <p class="desc">{{ featured.descripcion }}</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="{% url 'peliculas:detalle' featured.pk %}">
+              <i class="bi bi-play-fill"></i> Ver Ahora
+            </a>
+            {% if featured.has_trailer or True %}
+                <a href="{% url 'peliculas:detalle' featured.pk %}" class="btn btn-secondary">
+                <i class="bi bi-play-fill"></i> {% if featured.tipo == 'serie' %}Ver Serie{% else %}Ver Película{% endif %}
+              </a>
             {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ p.titulo }}</h5>
-              <p class="card-text">{{ p.descripcion|truncatechars:120 }}</p>
-              <a href="{% url 'detalle' p.pk %}" class="btn btn-primary">Ver detalles</a>
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'peliculas:toggle_favorito' featured.pk %}" class="fav-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-ghost fav-btn {% if featured.pk in favoritos_ids %}is-fav{% endif %}" style="border-radius: 10px; width: auto; height: auto;">
+                  <i class="bi bi-heart-fill"></i> Favorito
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    {% endwith %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    {% if recientes %}
+    <section style="margin-bottom: 40px;">
+      <h2 class="section-title"><i class="bi bi-clock-history"></i> Vistos Recientemente</h2>
+      <div class="grid grid-mini">
+        {% for p in recientes %}
+        <article class="card" style="max-width: 100%;">
+          <div class="card-img-container">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-img-link">
+              {% if p.imagen %}
+                <img src="{{ p.imagen }}" alt="{{ p.titulo }}" class="card-img" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+              {% else %}
+                <div class="card-placeholder" style="display:flex;">
+                  <i class="bi bi-film"></i>
+                  <span>{{ p.titulo|slice:":1" }}</span>
+                </div>
+              {% endif %}
+            </a>
+          </div>
+          <div class="card-body">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-title">{{ p.titulo }}</a>
+            <div class="card-meta">
+              <span>{{ p.anio }}</span>
+              {% if p.genero %}<span class="card-meta-genre">{{ p.genero.nombre }}</span>{% endif %}
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if recomendadas %}
+    <section style="margin-bottom: 40px;">
+      <h2 class="section-title"><i class="bi bi-stars"></i> Recomendadas para Ti</h2>
+      <div class="grid grid-mini">
+        {% for p in recomendadas %}
+        <article class="card" style="max-width: 100%;">
+          <div class="card-img-container">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-img-link">
+              {% if p.imagen %}
+                <img src="{{ p.imagen }}" alt="{{ p.titulo }}" class="card-img" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+              {% else %}
+                <div class="card-placeholder" style="display:flex;">
+                  <i class="bi bi-film"></i>
+                  <span>{{ p.titulo|slice:":1" }}</span>
+                </div>
+              {% endif %}
+            </a>
+            {% if p.promedio_calificacion %}
+            <div class="card-badge">
+              <span><i class="bi bi-star-fill"></i> {{ p.promedio_calificacion|floatformat:1 }}</span>
+            </div>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-title">{{ p.titulo }}</a>
+            <div class="card-meta">
+              <span>{{ p.anio }}</span>
+              {% if p.genero %}<span class="card-meta-genre">{{ p.genero.nombre }}</span>{% endif %}
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  {% endif %}
+
+  <h2 class="section-title">Catálogo Completo</h2>
+
+  <!-- Chips de Categorías (Géneros) -->
+  <div class="category-chips-container">
+    <div class="category-chips">
+      <a href="?{% if q %}q={{ q }}&{% endif %}{% if solo_trailers %}trailers=1{% endif %}" class="chip {% if not selected_genero %}active{% endif %}">
+        <i class="bi bi-grid-fill"></i> Todos
+      </a>
+      {% for g in generos %}
+        <a href="?genero={{ g.id }}{% if q %}&q={{ q }}{% endif %}{% if solo_trailers %}&trailers=1{% endif %}" class="chip {% if selected_genero == g.id|stringformat:'s' %}active{% endif %}">
+          {{ g.nombre }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <form method="get" action="{% url 'peliculas:index' %}" class="filter-form">
+      <div class="search-wrapper">
+        <i class="bi bi-search"></i>
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar por título, género o descripción..." class="search-input">
+      </div>
+      <select name="genero" class="select-input">
+        <option value="">Todos los géneros</option>
+        {% for g in generos %}
+          <option value="{{ g.id }}" {% if selected_genero == g.id|stringformat:"s" %}selected{% endif %}>{{ g.nombre }}</option>
+        {% endfor %}
+      </select>
+      <label class="trailer-filter">
+        <input type="checkbox" name="trailers" value="1" {% if solo_trailers %}checked{% endif %}>
+        <span><i class="bi bi-play-circle-fill"></i> Solo con video</span>
+      </label>
+      <button type="submit" class="btn btn-primary">Buscar</button>
+      {% if q or selected_genero or solo_trailers %}
+        <a href="{% url 'peliculas:index' %}" class="btn btn-ghost">Limpiar</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="grid">
+    {% for p in page_obj %}
+      <article class="card">
+        <div class="card-img-container">
+          <a href="{% url 'peliculas:detalle' p.pk %}" class="card-img-link">
+              {% if p.imagen %}
+                <img src="{{ p.imagen }}" alt="{{ p.titulo }}" class="card-img" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+              {% elif p.get_youtube_thumbnail %}
+                <img src="{{ p.get_youtube_thumbnail }}" alt="{{ p.titulo }}" class="card-img" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+              {% else %}
+                <div class="card-placeholder" style="display:none;">
+                  <i class="bi bi-film"></i>
+                  <span>{{ p.titulo|slice:":1" }}</span>
+                </div>
+              {% endif %}
+          </a>
+
+          {% if p.promedio_calificacion %}
+            <div class="card-badge">
+              <span style="display: flex; align-items: center; gap: 3px;"><i class="bi bi-star-fill"></i> {{ p.promedio_calificacion|floatformat:1 }}</span>
+            </div>
+          {% endif %}
+
+          <div class="card-actions-overlay">
+            <a href="{% url 'peliculas:detalle' p.pk %}" class="card-btn-trailer">
+              <i class="bi bi-play-fill"></i> Ver Película
+            </a>
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'peliculas:toggle_favorito' p.pk %}" class="fav-form" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="card-btn-fav {% if p.pk in favoritos_ids %}is-fav{% endif %}" aria-label="Favorito">
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </form>
+            {% endif %}
+          </div>
+          <div class="card-play-overlay" onclick="window.location='{% url 'peliculas:detalle' p.pk %}'">
+            <div class="card-play-icon">
+              <i class="bi bi-play-fill"></i>
             </div>
           </div>
         </div>
-        {% empty %}
-        <p>No hay peliculas disponibles.</p>
-        {% endfor %}
+
+        <div class="card-body">
+          <a href="{% url 'peliculas:detalle' p.pk %}" class="card-title">{{ p.titulo }}</a>
+          <div class="card-meta">
+            <span>{{ p.anio }}</span>
+            {% if p.genero %}
+              <span class="card-meta-genre">{{ p.genero.nombre }}</span>
+            {% endif %}
+          </div>
+          <a href="{% url 'peliculas:detalle' p.pk %}" class="card-btn-detail">Ver más <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+    {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted); background: var(--surface-color); border-radius: 16px; border: 1px solid var(--surface-border);">
+        <i class="bi bi-search" style="font-size: 3rem; display: block; margin-bottom: 16px; color: var(--text-dim);"></i>
+        <p>No encontramos películas con los filtros seleccionados.</p>
       </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page=1{% if q %}&q={{ q }}{% endif %}{% if selected_genero %}&genero={{ selected_genero }}{% endif %}" class="pagination-link">&laquo; Primero</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_genero %}&genero={{ selected_genero }}{% endif %}" class="pagination-link">Anterior</a>
+      {% endif %}
+      <span class="pagination-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_genero %}&genero={{ selected_genero }}{% endif %}" class="pagination-link">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if q %}&q={{ q }}{% endif %}{% if selected_genero %}&genero={{ selected_genero }}{% endif %}" class="pagination-link">Último &raquo;</a>
+      {% endif %}
     </div>
-  </body>
-</html>
+  {% endif %}
+{% endblock %}

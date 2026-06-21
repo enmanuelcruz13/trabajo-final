@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Agregar Película - CineGlow{% endblock %}
+
+{% block content %}
+  <div class="auth-page">
+    <div class="auth-card" style="max-width: 560px;">
+      <h1><i class="bi bi-plus-circle" style="color: var(--primary-color);"></i> Agregar Película</h1>
+      <p class="subtitle">Añade una nueva película al catálogo de CineGlow</p>
+
+      <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <span style="color: var(--accent-danger); font-size: 0.85rem;"><i class="bi bi-exclamation-circle"></i> {{ error }}</span>
+              {% endfor %}
+            {% endif %}
+            {% if field.help_text %}
+              <small style="color: var(--text-dim); font-size: 0.8rem;">{{ field.help_text }}</small>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+          <div style="background: rgba(239,68,68,0.06); border: 1px solid var(--accent-danger); border-radius: 10px; padding: 12px; color: var(--accent-danger);">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+          <i class="bi bi-plus-lg"></i> Agregar Película
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <a href="{% url 'peliculas:index' %}"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar en YouTube{% endblock %}
+
+{% block content %}
+<div class="youtube-search-section">
+    <h1 class="youtube-search-title">Buscar en YouTube</h1>
+    <p class="youtube-search-subtitle">Encuentra trailers, reseñas y contenido relacionado con películas</p>
+
+    <form method="get" class="filter-form" style="margin-bottom: 32px;">
+        <div class="search-wrapper">
+            <i class="bi bi-search"></i>
+            <input type="text" name="q" class="search-input" placeholder="Buscar videos..." value="{{ query }}">
+        </div>
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+    </form>
+
+    {% if query and not videos %}
+        <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid var(--accent-danger); border-radius: 12px; padding: 20px; color: var(--accent-danger); text-align: center;">
+            <i class="bi bi-exclamation-circle" style="font-size: 1.5rem; display: block; margin-bottom: 8px;"></i>
+            No se encontraron resultados para "{{ query }}".
+        </div>
+    {% endif %}
+
+    {% if videos %}
+        <div class="youtube-grid">
+            {% for video in videos %}
+                <div class="youtube-card">
+                    <a href="{% url 'peliculas:video_detalle_youtube' video.video_id %}?video_id={{ video.video_id }}">
+                        <img src="{{ video.thumbnail }}" class="youtube-card-img" alt="{{ video.title }}">
+                    </a>
+                    <div class="youtube-card-body">
+                        <a href="{% url 'peliculas:video_detalle_youtube' video.video_id %}?video_id={{ video.video_id }}" style="text-decoration: none;">
+                            <h6>{{ video.title|truncatechars:60 }}</h6>
+                        </a>
+                        <span class="text-muted">{{ video.channel_title }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

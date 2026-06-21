@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}CineGlow{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  </head>
+  <body>
+    <header class="navbar">
+      <div class="container navbar-inner">
+        <a class="navbar-brand" href="/">
+          <i class="bi bi-film"></i>
+          <span>
+            <strong>CineGlow</strong>
+            <small>Catálogo Académico de Cine</small>
+          </span>
+        </a>
+        <nav class="nav-links">
+          <a href="/" {% if request.path == '/' %}class="active"{% endif %}>Inicio</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'peliculas:mis_favoritos' %}" {% if 'favoritos' in request.path %}class="active"{% endif %}>Favoritos</a>
+            <span class="auth-info">
+              Hola, <span>{{ user.username }}</span>
+            </span>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-ghost" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 8px;">Salir</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" {% if 'login' in request.path %}class="active"{% endif %}>Entrar</a>
+            <a href="{% url 'register' %}" class="btn-accent">Registrarse</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" id="main-content">
+      {% block hero %}{% endblock %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <h3><i class="bi bi-film"></i> CineGlow</h3>
+          <p>Catálogo académico de películas con sistema de calificación, favoritos y reproducción de trailers.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/">Inicio</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'peliculas:mis_favoritos' %}">Favoritos</a>
+          {% endif %}
+        </div>
+        <div class="footer-meta">
+          <span>Desarrollo Web</span>
+          <span>Django</span>
+          <span>2024-2025</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>
