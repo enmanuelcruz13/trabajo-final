@@ -192,7 +192,7 @@ def detalle(request, pk):
         'favoritos_ids': favoritos_ids,
         'mi_calificacion': mi_calificacion,
         'main_video': main_video,
-        'secondary_trailer': secondary_trailer,
+        'secondary_video': secondary_video,
         'peliculas_similares': peliculas_similares,
     })
 
