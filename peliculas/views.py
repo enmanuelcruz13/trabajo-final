@@ -23,6 +23,7 @@ def youtube_to_embed(url):
     return url
 
 
+@login_required
 def index(request):
     q = request.GET.get('q', '').strip()
     genero_id = request.GET.get('genero', '').strip()
@@ -99,6 +100,7 @@ def index(request):
     })
 
 
+@login_required
 def detalle(request, pk):
     pelicula = get_object_or_404(
         Pelicula.objects.annotate(
