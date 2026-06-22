@@ -139,22 +139,37 @@ def detalle(request, pk):
     main_video = None
     secondary_trailer = None
 
+    # 1. Full movie from API
     if movie_results:
         v = movie_results[0]['video_id']
         used_video_id = v
         main_video = build_video(v)
 
+    # 2. Fallback: seed video as main
     if not main_video and video_id:
         used_video_id = video_id
         main_video = build_video(video_id)
 
+    # 3. Trailer from API
     if trailer_results:
         v = trailer_results[0]['video_id']
         if v != used_video_id:
             secondary_trailer = build_video(v)
 
-    if not secondary_trailer and video_id and video_id != used_video_id:
-        secondary_trailer = build_video(video_id, f'Tráiler - {pelicula.titulo}')
+    # 4. Fallback: seed as trailer (even if same as main)
+    if not secondary_trailer and video_id:
+        if video_id != used_video_id:
+            secondary_trailer = build_video(video_id, f'Tráiler - {pelicula.titulo}')
+        else:
+            secondary_trailer = build_video(video_id, f'{pelicula.titulo} - Tráiler')
+
+    # 5. Extreme fallback: any API result that didnt fit above
+    if not secondary_trailer:
+        for results in [movie_results, trailer_results]:
+            if results:
+                v = results[0]['video_id']
+                secondary_trailer = build_video(v, f'{pelicula.titulo} - Video')
+                break
         
     peliculas_similares = similares(pelicula, max_results=6)
 
