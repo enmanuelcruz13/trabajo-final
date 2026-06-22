@@ -124,3 +124,11 @@ LOGOUT_REDIRECT_URL = '/'
 CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'https://*.onrender.com').split(',')
 
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', '')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'cineglow-cache',
+        'TIMEOUT': 86400,
+    }
+}

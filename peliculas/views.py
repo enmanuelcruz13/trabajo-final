@@ -125,6 +125,8 @@ def detalle(request, pk):
     used_video_id = None
 
     def build_video(vid, title_override=None):
+        if not vid:
+            return None
         details = get_video_details(vid)
         v = {
             'video_id': vid,
