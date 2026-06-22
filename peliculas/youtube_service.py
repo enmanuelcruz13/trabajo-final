@@ -20,7 +20,8 @@ def search_videos(query, max_results=10):
         type='video',
         maxResults=max_results,
         videoEmbeddable='true',
-        videoSyndicated='true'
+        videoSyndicated='true',
+        relevanceLanguage='es'
     )
     response = request.execute()
     
