@@ -114,8 +114,11 @@ def detalle(request, pk):
         favoritos_ids = list(Favorito.objects.filter(usuario=request.user).values_list('pelicula_id', flat=True))
     
     # Search YouTube via API for alternative search results
-    query = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
+    query = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
     youtube_videos = search_videos(query, max_results=8)
+    if not youtube_videos:
+        query = f'{pelicula.titulo} {pelicula.anio} pelicula completa español'
+        youtube_videos = search_videos(query, max_results=8)
     
     # Prioritizar el video propio de la película si está configurado en video_url
     video_id = pelicula.get_youtube_id()

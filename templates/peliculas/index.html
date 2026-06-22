@@ -173,7 +173,7 @@
 
           <div class="card-actions-overlay">
             <a href="{% url 'peliculas:detalle' p.pk %}" class="card-btn-trailer">
-              <i class="bi bi-play-fill"></i> Ver Película
+              <i class="bi bi-play-fill"></i> Tráiler
             </a>
             {% if user.is_authenticated %}
               <form method="post" action="{% url 'peliculas:toggle_favorito' p.pk %}" class="fav-form" style="margin:0;">
