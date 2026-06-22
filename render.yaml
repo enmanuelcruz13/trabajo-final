@@ -15,7 +15,9 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         value: ".onrender.com,localhost,127.0.0.1"
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://postgres.qxpfwrqpxyqatbhxtomu:uwQK64KtXkk6DEIB@aws-1-us-east-2.pooler.supabase.com:6543/postgres?sslmode=require
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com,https://catalogo-peliculas.onrender.com"
       - key: YOUTUBE_API_KEY
         value: "AIzaSyA5Xi_1qpDpY_c-GnsZKluXMezn2Nw2piw"
       - key: PYTHON_VERSION

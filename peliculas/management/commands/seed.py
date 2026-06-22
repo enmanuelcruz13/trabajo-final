@@ -48,7 +48,13 @@ PELICULAS = [
 class Command(BaseCommand):
     help = 'Limpia y puebla la BD con peliculas de 2014-2026'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--if-empty', action='store_true', help='Solo poblar si no hay peliculas')
+
     def handle(self, *args, **options):
+        if options['if_empty'] and Pelicula.objects.exists():
+            self.stdout.write('Ya hay peliculas, saltando seed')
+            return
         self.stdout.write('Limpiando base de datos...')
         Pelicula.objects.all().delete()
         Genero.objects.all().delete()
