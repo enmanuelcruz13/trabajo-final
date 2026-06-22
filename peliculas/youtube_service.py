@@ -37,7 +37,8 @@ def search_videos(query, max_results=10):
             maxResults=max_results,
             videoEmbeddable='true',
             videoSyndicated='true',
-            relevanceLanguage='es'
+            relevanceLanguage='es',
+            regionCode='MX'
         )
         response = request.execute()
 
