@@ -115,33 +115,38 @@ def detalle(request, pk):
     if request.user.is_authenticated:
         favoritos_ids = list(Favorito.objects.filter(usuario=request.user).values_list('pelicula_id', flat=True))
     
-    # Search YouTube via API for alternative search results
-    query = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
-    youtube_videos = search_videos(query, max_results=8)
-    if not youtube_videos:
-        query = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
-        youtube_videos = search_videos(query, max_results=8)
+    # Search full movie (main video) and trailer (secondary)
+    query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
+    movie_results = search_videos(query_movie, max_results=3)
+    query_trailer = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
+    trailer_results = search_videos(query_trailer, max_results=3)
     
-    # Prioritizar el video propio de la película si está configurado en video_url
     video_id = pelicula.get_youtube_id()
-    trailer = None
+    main_video = None
+    secondary_trailer = None
 
-    if youtube_videos:
-        trailer = youtube_videos[0]
-        details = get_video_details(trailer['video_id'])
+    if movie_results:
+        main_video = movie_results[0]
+        details = get_video_details(main_video['video_id'])
         if details:
-            trailer.update(details)
+            main_video.update(details)
 
-    if not trailer and video_id:
+    if not main_video and video_id:
         details = get_video_details(video_id)
-        trailer = {
+        main_video = {
             'video_id': video_id,
             'title': pelicula.titulo,
             'thumbnail': pelicula.get_youtube_thumbnail() or '',
             'watch_url': pelicula.video_url,
         }
         if details:
-            trailer.update(details)
+            main_video.update(details)
+
+    if trailer_results:
+        secondary_trailer = trailer_results[0]
+        details = get_video_details(secondary_trailer['video_id'])
+        if details:
+            secondary_trailer.update(details)
         
     peliculas_similares = similares(pelicula, max_results=6)
 
@@ -150,8 +155,8 @@ def detalle(request, pk):
         'is_favorito': is_favorito,
         'favoritos_ids': favoritos_ids,
         'mi_calificacion': mi_calificacion,
-        'trailer': trailer,
-        'youtube_videos': youtube_videos,
+        'main_video': main_video,
+        'secondary_trailer': secondary_trailer,
         'peliculas_similares': peliculas_similares,
     })
 
