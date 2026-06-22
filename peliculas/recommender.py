@@ -20,7 +20,7 @@ def _build_index():
         ' '.join([p.titulo, p.descripcion or '', p.genero.nombre if p.genero else ''])
         for p in peliculas
     ]
-    vectorizer = TfidfVectorizer(stop_words='spanish', max_features=1000)
+    vectorizer = TfidfVectorizer(max_features=1000)
     matrix = vectorizer.fit_transform(docs)
     idx_map = {p.id: i for i, p in enumerate(peliculas)}
     return peliculas, matrix, vectorizer, idx_map
