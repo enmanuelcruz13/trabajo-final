@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import models
@@ -88,13 +89,14 @@ def index(request):
 
 @login_required
 def detalle(request, pk):
-    pelicula = get_object_or_404(
-        Pelicula.objects.annotate(
+    try:
+        pelicula = Pelicula.objects.annotate(
             promedio_calificacion=Avg('calificaciones__puntuacion'),
             num_calificaciones=Count('calificaciones')
-        ), 
-        pk=pk
-    )
+        ).get(pk=pk)
+    except Pelicula.DoesNotExist:
+        messages.error(request, 'La pelicula solicitada no existe.')
+        return redirect('peliculas:index')
     
     is_favorito = False
     mi_calificacion = None
