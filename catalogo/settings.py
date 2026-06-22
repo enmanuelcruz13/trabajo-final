@@ -98,7 +98,7 @@ elif os.getenv('DJANGO_USE_SQLITE', '1') == '1':
 
 AUTH_PASSWORD_VALIDATORS = []
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = 'es-419'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
