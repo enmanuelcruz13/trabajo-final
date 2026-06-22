@@ -115,19 +115,19 @@ def detalle(request, pk):
     if request.user.is_authenticated:
         favoritos_ids = list(Favorito.objects.filter(usuario=request.user).values_list('pelicula_id', flat=True))
     
-    # Search full movie (main video) and trailer (secondary)
-    movie_results = []
+    # Search trailer (main video) and full movie (secondary)
     trailer_results = []
-    try:
-        query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
-        movie_results = search_videos(query_movie, max_results=3)
-    except Exception:
-        movie_results = []
+    movie_results = []
     try:
         query_trailer = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
         trailer_results = search_videos(query_trailer, max_results=3)
     except Exception:
         trailer_results = []
+    try:
+        query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
+        movie_results = search_videos(query_movie, max_results=3)
+    except Exception:
+        movie_results = []
     
     video_id = pelicula.get_youtube_id()
     used_video_id = None
@@ -150,11 +150,11 @@ def detalle(request, pk):
         return v
 
     main_video = None
-    secondary_trailer = None
+    secondary_video = None
 
-    # 1. Full movie from API
-    if movie_results:
-        v = movie_results[0]['video_id']
+    # 1. Trailer from API
+    if trailer_results:
+        v = trailer_results[0]['video_id']
         used_video_id = v
         main_video = build_video(v)
 
@@ -163,25 +163,25 @@ def detalle(request, pk):
         used_video_id = video_id
         main_video = build_video(video_id)
 
-    # 3. Trailer from API
-    if trailer_results:
-        v = trailer_results[0]['video_id']
+    # 3. Full movie from API
+    if movie_results:
+        v = movie_results[0]['video_id']
         if v != used_video_id:
-            secondary_trailer = build_video(v)
+            secondary_video = build_video(v)
 
-    # 4. Fallback: seed as trailer (even if same as main)
-    if not secondary_trailer and video_id:
+    # 4. Fallback: seed as secondary
+    if not secondary_video and video_id:
         if video_id != used_video_id:
-            secondary_trailer = build_video(video_id, f'Tráiler - {pelicula.titulo}')
+            secondary_video = build_video(video_id, f'{pelicula.titulo} - Película')
         else:
-            secondary_trailer = build_video(video_id, f'{pelicula.titulo} - Tráiler')
+            secondary_video = build_video(video_id, f'{pelicula.titulo} - Completa')
 
-    # 5. Extreme fallback: any API result that didnt fit above
-    if not secondary_trailer:
-        for results in [movie_results, trailer_results]:
+    # 5. Extreme fallback: any API result
+    if not secondary_video:
+        for results in [trailer_results, movie_results]:
             if results:
                 v = results[0]['video_id']
-                secondary_trailer = build_video(v, f'{pelicula.titulo} - Video')
+                secondary_video = build_video(v, f'{pelicula.titulo} - Video')
                 break
         
     peliculas_similares = similares(pelicula, max_results=6)
