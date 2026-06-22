@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Mi Perfil - CineGlow{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card" style="max-width: 500px; text-align: center;">
+    <div style="margin-bottom: 20px;">
+      <img src="{{ profile.get_avatar }}" alt="{{ user.username }}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
+    </div>
+    <h1 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 4px;">{{ user.username }}</h1>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">{{ user.email|default:'Sin correo registrado' }}</p>
+
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap;">
+      <div style="background: var(--surface-color); border: 1px solid var(--surface-border); border-radius: 12px; padding: 16px 24px; min-width: 100px;">
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-warning);">{{ total_favoritos }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Favoritos</div>
+      </div>
+      <div style="background: var(--surface-color); border: 1px solid var(--surface-border); border-radius: 12px; padding: 16px 24px; min-width: 100px;">
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-info);">{{ total_calificaciones }}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Calificaciones</div>
+      </div>
+    </div>
+
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary" style="width: 100%;">
+      <i class="bi bi-pencil"></i> Editar Foto de Perfil
+    </a>
+    <a href="{% url 'peliculas:index' %}" class="btn btn-ghost" style="width: 100%; margin-top: 8px;">
+      <i class="bi bi-film"></i> Ir al Catálogo
+    </a>
+  </div>
+</div>
+{% endblock %}

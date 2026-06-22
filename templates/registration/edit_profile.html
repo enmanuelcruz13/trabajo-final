@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Editar Perfil - CineGlow{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card" style="max-width: 500px;">
+    <h1>Editar Foto</h1>
+    <p class="subtitle">Cambia tu foto de perfil</p>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <img src="{{ profile.get_avatar }}" alt="{{ user.username }}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color);">
+    </div>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="avatar">URL de la imagen</label>
+        <input type="url" name="avatar" id="avatar" class="form-control" placeholder="https://ejemplo.com/mi-foto.jpg" value="{{ profile.avatar }}">
+        <span style="color: var(--text-dim); font-size: 0.75rem; margin-top: 4px;">Pega una URL directa a una imagen cuadrada para mejor resultado</span>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save"></i> Guardar Cambios
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'accounts:profile' %}">← Volver a mi perfil</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

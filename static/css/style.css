@@ -1614,6 +1614,11 @@ body {
   .auth-info {
     justify-content: center;
     padding: 8px 0;
+    flex-wrap: wrap;
+  }
+  .nav-links .auth-info img {
+    width: 28px;
+    height: 28px;
   }
   .nav-links form .btn {
     width: 100%;
@@ -1748,6 +1753,21 @@ body {
   .pagination-link {
     padding: 8px 12px;
     font-size: 0.8rem;
+  }
+}
+
+/* ===== Profile mobile ===== */
+@media (max-width: 480px) {
+  .auth-card img[style*="120px"] {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  .auth-card div[style*="min-width: 100px"] {
+    min-width: 80px !important;
+    padding: 12px 16px !important;
+  }
+  .auth-card div[style*="min-width: 100px"] div:first-child {
+    font-size: 1.2rem !important;
   }
 }
 
