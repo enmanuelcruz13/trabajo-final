@@ -16,5 +16,7 @@ services:
         value: ".onrender.com,localhost,127.0.0.1"
       - key: DATABASE_URL
         sync: false
+      - key: YOUTUBE_API_KEY
+        value: "AIzaSyA5Xi_1qpDpY_c-GnsZKluXMezn2Nw2piw"
       - key: PYTHON_VERSION
         value: "3.11"

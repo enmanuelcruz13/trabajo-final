@@ -2,13 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db import models
-from django.db.models import Avg, Count, Case, When, IntegerField
+from django.db.models import Avg, Count, Case, When, IntegerField, Q
 from django.core.paginator import Paginator
 from django.utils import timezone
 from .models import Pelicula, Favorito, Calificacion, Genero, HistorialVisualizacion
 from .forms import PeliculaForm
 from .youtube_service import search_videos, get_video_details
-from .recommender import recomendar
+from .recommender import recomendar, similares
 import re
 
 
@@ -138,6 +138,8 @@ def detalle(request, pk):
         if details:
             trailer.update(details)
         
+    peliculas_similares = similares(pelicula, max_results=6)
+
     return render(request, 'peliculas/detalle.html', {
         'pelicula': pelicula,
         'is_favorito': is_favorito,
@@ -145,6 +147,7 @@ def detalle(request, pk):
         'mi_calificacion': mi_calificacion,
         'trailer': trailer,
         'youtube_videos': youtube_videos,
+        'peliculas_similares': peliculas_similares,
     })
 
 
