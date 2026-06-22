@@ -9,3 +9,4 @@ db.sqlite3
 catalogo_new/
 *.log
 .env
+staticfiles/

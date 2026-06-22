@@ -5,4 +5,6 @@ uvicorn[standard]
 google-api-python-client
 dj-database-url
 psycopg2-binary
+whitenoise
+gunicorn
 
