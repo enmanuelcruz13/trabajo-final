@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from .models import Pelicula, Favorito, Calificacion, Genero, HistorialVisualizacion
 from .forms import PeliculaForm
-from .youtube_service import search_videos, get_video_details
+
 from .recommender import recomendar, similares
 import re
 
@@ -121,60 +121,16 @@ def detalle(request, pk):
     def build_video(vid, title_override=None):
         if not vid:
             return None
-        v = {
+        return {
             'video_id': vid,
             'title': title_override or pelicula.titulo,
             'thumbnail': f'https://img.youtube.com/vi/{vid}/mqdefault.jpg',
             'watch_url': f'https://www.youtube.com/watch?v={vid}',
         }
-        try:
-            details = get_video_details(vid)
-            if details:
-                v.update(details)
-        except Exception:
-            pass
-        return v
 
-    main_video = None
+    # Use seed video directly (YouTube API quota is exceeded)
+    main_video = build_video(video_id) if video_id else None
     secondary_video = None
-    trailer_from_api = None
-    movie_from_api = None
-
-    # Search API for trailer and full movie
-    try:
-        query_trailer = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
-        r = search_videos(query_trailer, max_results=3)
-        if r:
-            trailer_from_api = r[0]['video_id']
-    except Exception:
-        pass
-    try:
-        query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
-        r = search_videos(query_movie, max_results=3)
-        if r:
-            movie_from_api = r[0]['video_id']
-    except Exception:
-        pass
-
-    # Main video: prefer API trailer, fallback to seed
-    if trailer_from_api:
-        main_video = build_video(trailer_from_api)
-    elif video_id:
-        main_video = build_video(video_id)
-
-    # Secondary video: prefer API movie (if different from main), fallback to seed (if different) or API trailer
-    used_ids = set()
-    if main_video:
-        used_ids.add(main_video['video_id'])
-
-    if movie_from_api and movie_from_api not in used_ids:
-        secondary_video = build_video(movie_from_api)
-    elif video_id and video_id not in used_ids:
-        secondary_video = build_video(video_id, f'{pelicula.titulo} - Película')
-    elif trailer_from_api and trailer_from_api not in used_ids:
-        secondary_video = build_video(trailer_from_api, f'{pelicula.titulo} - Video')
-    elif video_id:
-        secondary_video = build_video(video_id, f'{pelicula.titulo} - Completa')
         
     peliculas_similares = similares(pelicula, max_results=6)
 
