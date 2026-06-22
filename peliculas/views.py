@@ -120,21 +120,21 @@ def detalle(request, pk):
     # Prioritizar el video propio de la película si está configurado en video_url
     video_id = pelicula.get_youtube_id()
     trailer = None
-    
-    if video_id:
+
+    if youtube_videos:
+        trailer = youtube_videos[0]
+        details = get_video_details(trailer['video_id'])
+        if details:
+            trailer.update(details)
+
+    if not trailer and video_id:
         details = get_video_details(video_id)
         trailer = {
             'video_id': video_id,
             'title': pelicula.titulo,
-            'thumbnail': pelicula.get_youtube_thumbnail() or (youtube_videos[0]['thumbnail'] if youtube_videos else ''),
+            'thumbnail': pelicula.get_youtube_thumbnail() or '',
             'watch_url': pelicula.video_url,
-            'channel_title': 'Reproductor CineGlow'
         }
-        if details:
-            trailer.update(details)
-    elif youtube_videos:
-        trailer = youtube_videos[0]
-        details = get_video_details(trailer['video_id'])
         if details:
             trailer.update(details)
         
