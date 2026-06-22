@@ -19,6 +19,6 @@ services:
       - key: DJANGO_CSRF_TRUSTED_ORIGINS
         value: "https://*.onrender.com,https://catalogo-peliculas.onrender.com"
       - key: YOUTUBE_API_KEY
-        value: "AIzaSyA5Xi_1qpDpY_c-GnsZKluXMezn2Nw2piw"
+        value: "AIzaSyDy7tKNJDdY_QQFsL265EjRcoZSZyuzk3E"
       - key: PYTHON_VERSION
         value: "3.11"
