@@ -53,6 +53,11 @@
                 </div>
               {% endif %}
             </a>
+            {% if p.promedio_calificacion %}
+            <div class="card-badge">
+              <span><i class="bi bi-star-fill"></i> {{ p.promedio_calificacion|floatformat:1 }}</span>
+            </div>
+            {% endif %}
           </div>
           <div class="card-body">
             <a href="{% url 'peliculas:detalle' p.pk %}" class="card-title">{{ p.titulo }}</a>
@@ -69,7 +74,7 @@
 
     {% if recomendadas %}
     <section style="margin-bottom: 40px;">
-      <h2 class="section-title"><i class="bi bi-stars"></i> Recomendadas para Ti</h2>
+      <h2 class="section-title"><i class="bi bi-stars"></i> Recomendadas por IA</h2>
       <div class="grid grid-mini">
         {% for p in recomendadas %}
         <article class="card" style="max-width: 100%;">

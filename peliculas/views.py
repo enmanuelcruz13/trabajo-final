@@ -8,6 +8,7 @@ from django.utils import timezone
 from .models import Pelicula, Favorito, Calificacion, Genero, HistorialVisualizacion
 from .forms import PeliculaForm
 from .youtube_service import search_videos, get_video_details
+from .recommender import recomendar
 import re
 
 
@@ -72,22 +73,7 @@ def index(request):
                 num_calificaciones=Count('calificaciones')
             ).select_related('genero').order_by(preserved)
         
-        generos_vistos = list(HistorialVisualizacion.objects.filter(
-            usuario=request.user
-        ).values_list('pelicula__genero', flat=True).distinct())
-        
-        if generos_vistos:
-            recomendadas = Pelicula.objects.filter(
-                genero_id__in=generos_vistos
-            ).exclude(
-                historialvisualizacion__usuario=request.user
-            ).exclude(
-                pk__in=vistas_ids
-            ).annotate(
-                promedio_calificacion=Avg('calificaciones__puntuacion'),
-                num_calificaciones=Count('calificaciones')
-            ).select_related('genero').order_by('-promedio_calificacion')[:10]
-        
+        recomendadas = recomendar(request.user, max_results=12)
     return render(request, 'peliculas/index.html', {
         'page_obj': page_obj,
         'generos': generos,
