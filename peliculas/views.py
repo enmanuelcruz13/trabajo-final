@@ -116,10 +116,18 @@ def detalle(request, pk):
         favoritos_ids = list(Favorito.objects.filter(usuario=request.user).values_list('pelicula_id', flat=True))
     
     # Search full movie (main video) and trailer (secondary)
-    query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
-    movie_results = search_videos(query_movie, max_results=3)
-    query_trailer = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
-    trailer_results = search_videos(query_trailer, max_results=3)
+    movie_results = []
+    trailer_results = []
+    try:
+        query_movie = f'{pelicula.titulo} {pelicula.anio} pelicula completa español latino'
+        movie_results = search_videos(query_movie, max_results=3)
+    except Exception:
+        movie_results = []
+    try:
+        query_trailer = f'{pelicula.titulo} {pelicula.anio} trailer español latino'
+        trailer_results = search_videos(query_trailer, max_results=3)
+    except Exception:
+        trailer_results = []
     
     video_id = pelicula.get_youtube_id()
     used_video_id = None
@@ -127,15 +135,18 @@ def detalle(request, pk):
     def build_video(vid, title_override=None):
         if not vid:
             return None
-        details = get_video_details(vid)
         v = {
             'video_id': vid,
             'title': title_override or pelicula.titulo,
             'thumbnail': f'https://img.youtube.com/vi/{vid}/mqdefault.jpg',
             'watch_url': f'https://www.youtube.com/watch?v={vid}',
         }
-        if details:
-            v.update(details)
+        try:
+            details = get_video_details(vid)
+            if details:
+                v.update(details)
+        except Exception:
+            pass
         return v
 
     main_video = None
