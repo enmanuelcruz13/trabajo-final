@@ -1,31 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}{{ pelicula.titulo }} - CineGlow{% endblock %}
-
-{% block extra_scripts %}
-{% if main_video %}
-<script>
-  var player;
-  function onYouTubeIframeAPIReady() {
-    var container = document.getElementById('player-container');
-    if (!container) return;
-    player = new YT.Player('player', {
-      height: '100%',
-      width: '100%',
-      videoId: '{{ main_video.video_id }}',
-      playerVars: { origin: window.location.origin, rel: 0 },
-      events: {
-        onError: function() {
-          container.style.display = 'none';
-          document.getElementById('trailer-fallback').style.display = 'flex';
-        }
-      }
-    });
-  }
-</script>
-{% endif %}
-{% endblock %}
-
 {% block content %}
   <div class="detail-grid">
     <div class="detail-img-container">
@@ -109,16 +84,15 @@
     <h3 style="font-family: var(--font-display); margin-bottom: 16px; font-size: 1.3rem;">
       <i class="bi bi-play-circle-fill" style="color: var(--accent-danger);"></i> {{ main_video.title }}
     </h3>
-    <div class="trailer-card" style="background: var(--surface-color); border: 1px solid var(--surface-border); border-radius: 14px; overflow: hidden;">
-      <div id="player-container" style="position: relative; aspect-ratio: 16/9;">
-        <div id="player" style="width: 100%; height: 100%;"></div>
-        <div id="trailer-fallback" style="display: none; position: absolute; inset: 0; background: #000; color: #fff; align-items: center; justify-content: center; flex-direction: column; gap: 16px; text-align: center; padding: 24px;">
-          <i class="bi bi-youtube" style="font-size: 4rem; color: var(--accent-danger);"></i>
-          <p>Este video no se puede reproducir incrustado aquí.</p>
-            <a href="{{ main_video.watch_url }}" target="_blank" rel="noopener" class="btn btn-primary">
-            <i class="bi bi-play-fill"></i> Ver Tráiler en YouTube
-          </a>
-        </div>
+    <div class="trailer-card" style="background: #000; border: 1px solid var(--surface-border); border-radius: 14px; overflow: hidden;">
+      <div style="position: relative; aspect-ratio: 16/9;">
+        <iframe
+          src="https://www.youtube.com/embed/{{ main_video.video_id }}?autoplay=0&rel=0&hl=es"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+          allowfullscreen
+          loading="lazy"
+          title="{{ main_video.title }}">
+        </iframe>
       </div>
     </div>
   </div>
