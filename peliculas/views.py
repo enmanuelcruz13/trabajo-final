@@ -122,31 +122,39 @@ def detalle(request, pk):
     trailer_results = search_videos(query_trailer, max_results=3)
     
     video_id = pelicula.get_youtube_id()
+    used_video_id = None
+
+    def build_video(vid, title_override=None):
+        details = get_video_details(vid)
+        v = {
+            'video_id': vid,
+            'title': title_override or pelicula.titulo,
+            'thumbnail': f'https://img.youtube.com/vi/{vid}/mqdefault.jpg',
+            'watch_url': f'https://www.youtube.com/watch?v={vid}',
+        }
+        if details:
+            v.update(details)
+        return v
+
     main_video = None
     secondary_trailer = None
 
     if movie_results:
-        main_video = movie_results[0]
-        details = get_video_details(main_video['video_id'])
-        if details:
-            main_video.update(details)
+        v = movie_results[0]['video_id']
+        used_video_id = v
+        main_video = build_video(v)
 
     if not main_video and video_id:
-        details = get_video_details(video_id)
-        main_video = {
-            'video_id': video_id,
-            'title': pelicula.titulo,
-            'thumbnail': pelicula.get_youtube_thumbnail() or '',
-            'watch_url': pelicula.video_url,
-        }
-        if details:
-            main_video.update(details)
+        used_video_id = video_id
+        main_video = build_video(video_id)
 
     if trailer_results:
-        secondary_trailer = trailer_results[0]
-        details = get_video_details(secondary_trailer['video_id'])
-        if details:
-            secondary_trailer.update(details)
+        v = trailer_results[0]['video_id']
+        if v != used_video_id:
+            secondary_trailer = build_video(v)
+
+    if not secondary_trailer and video_id and video_id != used_video_id:
+        secondary_trailer = build_video(video_id, f'Tráiler - {pelicula.titulo}')
         
     peliculas_similares = similares(pelicula, max_results=6)
 
