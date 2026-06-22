@@ -37,7 +37,7 @@
             </form>
           {% else %}
             <a href="{% url 'login' %}" {% if 'login' in request.path %}class="active"{% endif %}>Entrar</a>
-            <a href="{% url 'register' %}" class="btn-accent">Registrarse</a>
+            <a href="{% url 'accounts:register' %}" class="btn-accent">Registrarse</a>
           {% endif %}
         </nav>
       </div>
