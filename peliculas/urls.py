@@ -5,6 +5,7 @@ app_name = 'peliculas'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('presentacion/', views.presentacion, name='presentacion'),
     path('pelicula/<int:pk>/', views.detalle, name='detalle'),
     path('pelicula/<int:pk>/favorito/', views.toggle_favorito, name='toggle_favorito'),
     path('pelicula/<int:pk>/calificar/', views.calificar_pelicula, name='calificar_pelicula'),

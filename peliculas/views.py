@@ -225,6 +225,37 @@ def mis_favoritos(request):
     })
 
 
+def presentacion(request):
+    peliculas = Pelicula.objects.select_related('genero').order_by('genero__nombre', 'titulo')
+    LANGUAGES = {
+        '1bsnGZq2zDU': 'Español Latino', 'JqbaroodoMY': 'Español Latino',
+        'ifDv0VwqRBs': 'Español (España)', 'S6nBnPNPFEY': 'Español (España)',
+        'ZdamZzFQ_nQ': 'Español Latino', '4drpZPgkqEQ': 'Español Latino',
+        'eVjyW9EJOTI': 'Español (España)', '-PtU49Aol00': 'Español (España)',
+        'T8yiZZdGBvg': 'Español Latino',
+        'REqVEoGBb_A': 'Español (España)', 'ZTo5Ia6TEoE': 'Español Latino',
+        'U3cKYWgl2dU': 'Español (España)', 'gH2mRECr6y4': 'Español Latino',
+        '5mAbnQQiPD8': 'Español Latino', 'EAxJNUAhOqQ': 'Español Latino',
+        '-4MjuI3gO-A': 'Español (España)', 'ndStFxq8zfU': 'Español Latino',
+        '0zvo9oI9L8s': 'Español Latino', 'Vsx5yHIxn38': 'Español Latino',
+        'WN2AS_u2gxQ': 'Español Latino', '53rKOnt5SAA': 'Español Latino',
+        'd2D13NNP40A': 'Español Latino',
+        'K4zB0Bff9JE': 'Español (España)', 'fPfyocUJV_o': 'Español (España)',
+        'yiPvtoNMRa4': 'Español (España)', 'qI-IaB14X-4': 'Español Latino',
+        '-5CqS2u_jb4': 'Español (España)', 'baM9_IxNgY4': 'Español (España)',
+        'V-fy58KemlE': 'Español Latino', 'yMQvDeyr6OQ': 'Español (España)',
+    }
+    for p in peliculas:
+        vid = p.get_youtube_id()
+        p.trailer_lang = LANGUAGES.get(vid, 'Español')
+        p.trailer_vid = vid
+    agrupadas = {}
+    for p in peliculas:
+        agrupadas.setdefault(p.genero.nombre, []).append(p)
+    return render(request, 'peliculas/presentacion.html', {
+        'grupos': agrupadas,
+    })
+
 @login_required
 def agregar_pelicula(request):
     if request.method == 'POST':
