@@ -26,6 +26,12 @@ def youtube_to_embed(url):
 
 
 @login_required
+ENG_TO_ESP = {
+    'VjctHUEmutw': 'S6nBnPNPFEY', '9NJj12tJzqc': 'eVjyW9EJOTI',
+    'wxN1T1uxQ2g': 'U3cKYWgl2dU', 'k5WQZzDRVtw': 'K4zB0Bff9JE',
+    'V6wWKNij_1M': 'yiPvtoNMRa4', 'VDMf9m7FXd4': 'baM9_IxNgY4',
+}
+
 def index(request):
     q = request.GET.get('q', '').strip()
     genero_id = request.GET.get('genero', '').strip()
@@ -57,6 +63,13 @@ def index(request):
     
     generos = Genero.objects.all()
     
+    # Build direct YouTube URLs for trailer buttons (with ENG_TO_ESP override)
+    youtube_urls = {}
+    for p in qs:
+        vid = p.get_youtube_id()
+        vid = ENG_TO_ESP.get(vid, vid)
+        youtube_urls[p.pk] = f'https://www.youtube.com/watch?v={vid}'
+    
     favoritos_ids = []
     recientes = []
     recomendadas = []
@@ -84,6 +97,7 @@ def index(request):
         'q': q,
         'selected_genero': genero_id,
         'solo_trailers': solo_trailers,
+        'youtube_urls': youtube_urls,
     })
 
 
