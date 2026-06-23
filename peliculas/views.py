@@ -228,22 +228,22 @@ def mis_favoritos(request):
 def presentacion(request):
     peliculas = Pelicula.objects.select_related('genero').order_by('genero__nombre', 'titulo')
     LANGUAGES = {
-        '1bsnGZq2zDU': 'Español Latino', 'JqbaroodoMY': 'Español Latino',
-        'ifDv0VwqRBs': 'Español (España)', 'S6nBnPNPFEY': 'Español (España)',
-        'ZdamZzFQ_nQ': 'Español Latino', '4drpZPgkqEQ': 'Español Latino',
-        'eVjyW9EJOTI': 'Español (España)', '-PtU49Aol00': 'Español (España)',
-        'T8yiZZdGBvg': 'Español Latino',
-        'REqVEoGBb_A': 'Español (España)', 'ZTo5Ia6TEoE': 'Español Latino',
-        'U3cKYWgl2dU': 'Español (España)', 'gH2mRECr6y4': 'Español Latino',
-        '5mAbnQQiPD8': 'Español Latino', 'EAxJNUAhOqQ': 'Español Latino',
-        '-4MjuI3gO-A': 'Español (España)', 'ndStFxq8zfU': 'Español Latino',
-        '0zvo9oI9L8s': 'Español Latino', 'Vsx5yHIxn38': 'Español Latino',
-        'WN2AS_u2gxQ': 'Español Latino', '53rKOnt5SAA': 'Español Latino',
-        'd2D13NNP40A': 'Español Latino',
-        'K4zB0Bff9JE': 'Español (España)', 'fPfyocUJV_o': 'Español (España)',
-        'yiPvtoNMRa4': 'Español (España)', 'qI-IaB14X-4': 'Español Latino',
-        '-5CqS2u_jb4': 'Español (España)', 'baM9_IxNgY4': 'Español (España)',
-        'V-fy58KemlE': 'Español Latino', 'yMQvDeyr6OQ': 'Español (España)',
+        '34jggoc78YQ': 'Español (España)', 'JqbaroodoMY': 'Español Latino',
+        'gPf-JzvmZ7k': 'Español (España)', 'S6nBnPNPFEY': 'Español (España)',
+        'ZdamZzFQ_nQ': 'Español Latino', 'VTZGlOALm7c': 'Español (España)',
+        'eVjyW9EJOTI': 'Español (España)', '90dWVETAdtI': 'Español (España)',
+        'JpUd4BS7yI0': 'Español (España)',
+        'IImKsmIZ1VY': 'Español (España)', 'vhJroWmp_k8': 'Español Latino',
+        'U3cKYWgl2dU': 'Español (España)', 'zh4KhVSMwtQ': 'Español Latino',
+        'JxdU76YYeMc': 'Español (España)', 'xO-YDwxhMYE': 'Español (España)',
+        'FFqmwnkkRtE': 'Español Latino', 'VzI7Np0hWTY': 'Español (España)',
+        'x-xlkjPwaOY': 'Español (España)', 'Vsx5yHIxn38': 'Español Latino',
+        'k-8ZFn1Askc': 'Español (España)', 'hBUDtda8g8Q': 'Español (España)',
+        'SAH_W9q_brE': 'Español (España)',
+        'K4zB0Bff9JE': 'Español (España)', 'hzTZKeSqOeg': 'Español (España)',
+        'yiPvtoNMRa4': 'Español (España)', 'MxSIK-jngVA': 'Español Latino',
+        '9Lt8QAZkc94': 'Español (España)', 'baM9_IxNgY4': 'Español (España)',
+        'CDR8oapp2Wo': 'Español (España)', 'tINUmaEN-8M': 'Español (España)',
     }
     for p in peliculas:
         vid = p.get_youtube_id()
