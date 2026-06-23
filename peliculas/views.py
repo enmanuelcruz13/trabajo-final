@@ -25,7 +25,6 @@ def youtube_to_embed(url):
     return url
 
 
-@login_required
 ENG_TO_ESP = {
     'VjctHUEmutw': 'S6nBnPNPFEY', '9NJj12tJzqc': 'eVjyW9EJOTI',
     'wxN1T1uxQ2g': 'U3cKYWgl2dU', 'k5WQZzDRVtw': 'K4zB0Bff9JE',
