@@ -3,5 +3,5 @@ set -o errexit
 
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed  # force re-seed with corrected Spanish IDs
+python manage.py seed --if-empty
 python manage.py collectstatic --no-input
