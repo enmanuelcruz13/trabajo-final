@@ -13,7 +13,7 @@
   <body>
     <header class="navbar">
       <div class="container navbar-inner">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/catalogo/">
           <i class="bi bi-film"></i>
           <span>
             <strong>CineGlow</strong>
@@ -24,7 +24,7 @@
           <i class="bi bi-list"></i>
         </button>
         <nav class="nav-links">
-          <a href="/" {% if request.path == '/' %}class="active"{% endif %}>Inicio</a>
+          <a href="/catalogo/" {% if request.path == '/catalogo/' %}class="active"{% endif %}>Inicio</a>
           {% if user.is_authenticated %}
             <a href="{% url 'peliculas:mis_favoritos' %}" {% if 'favoritos' in request.path %}class="active"{% endif %}>Favoritos</a>
             <a href="{% url 'accounts:profile' %}" class="auth-info" style="text-decoration: none;">
@@ -55,7 +55,7 @@
           <p>Catálogo académico de películas con sistema de calificación, favoritos y reproducción de trailers.</p>
         </div>
         <div class="footer-links">
-          <a href="/">Inicio</a>
+          <a href="/catalogo/">Inicio</a>
           {% if user.is_authenticated %}
             <a href="{% url 'peliculas:mis_favoritos' %}">Favoritos</a>
           {% endif %}
