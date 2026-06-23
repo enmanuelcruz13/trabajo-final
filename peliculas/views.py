@@ -115,8 +115,14 @@ def detalle(request, pk):
     if request.user.is_authenticated:
         favoritos_ids = list(Favorito.objects.filter(usuario=request.user).values_list('pelicula_id', flat=True))
     
-    # Always use seed video as baseline
+    # Override English IDs with Spanish ones
+    ENG_TO_ESP = {
+        'VjctHUEmutw': 'S6nBnPNPFEY', '9NJj12tJzqc': 'eVjyW9EJOTI',
+        'wxN1T1uxQ2g': 'U3cKYWgl2dU', 'k5WQZzDRVtw': 'K4zB0Bff9JE',
+        'V6wWKNij_1M': 'yiPvtoNMRa4', 'VDMf9m7FXd4': 'baM9_IxNgY4',
+    }
     video_id = pelicula.get_youtube_id()
+    video_id = ENG_TO_ESP.get(video_id, video_id)
 
     def build_video(vid, title_override=None):
         if not vid:
@@ -227,6 +233,15 @@ def mis_favoritos(request):
 
 def presentacion(request):
     peliculas = Pelicula.objects.select_related('genero').order_by('genero__nombre', 'titulo')
+    # Override 6 English IDs in the DB with correct Spanish ones
+    ENG_TO_ESP = {
+        'VjctHUEmutw': 'S6nBnPNPFEY',  # The Equalizer
+        '9NJj12tJzqc': 'eVjyW9EJOTI',  # Moonlight
+        'wxN1T1uxQ2g': 'U3cKYWgl2dU',  # Everything Everywhere
+        'k5WQZzDRVtw': 'K4zB0Bff9JE',  # The Babadook
+        'V6wWKNij_1M': 'yiPvtoNMRa4',  # Hereditary
+        'VDMf9m7FXd4': 'baM9_IxNgY4',  # La La Land
+    }
     LANGUAGES = {
         '34jggoc78YQ': 'Español (España)', 'JqbaroodoMY': 'Español Latino',
         'gPf-JzvmZ7k': 'Español (España)', 'S6nBnPNPFEY': 'Español (España)',
@@ -247,6 +262,7 @@ def presentacion(request):
     }
     for p in peliculas:
         vid = p.get_youtube_id()
+        vid = ENG_TO_ESP.get(vid, vid)
         p.trailer_lang = LANGUAGES.get(vid, 'Español')
         p.trailer_vid = vid
     agrupadas = {}
